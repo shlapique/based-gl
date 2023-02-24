@@ -2,6 +2,8 @@
 
 currently i use SDL2 to draw pixels, i'll get rid of it later (i hope)
 
+O(n^inf) 😋
+
 ## Requirements
 
 ### openSUSE Tumbleweed 
