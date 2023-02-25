@@ -40,6 +40,8 @@ class GMath
                 std::vector <std::vector <Point>>, V4);
         static void get_sides(std::vector <std::vector <int>> &, std::vector <std::vector <int>>,
                 std::vector <Point>);
+        static void convex_hull(std::vector <std::vector <int>> &, std::vector <std::vector <int>>);
+        static std::vector <std::vector <int>> gypsy_delon(std::vector <std::vector <int>>);
 };
 
 #endif

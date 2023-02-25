@@ -231,7 +231,6 @@ void GMath::get_sides(std::vector <std::vector <int>> &sides,
     sides.resize(planeset.size());
     for(size_t i = 0; i < planes.size(); ++i)
     {
-        printf("\tSIDE[%d]: ", i);
         for(size_t j = 0; j < vertex.size(); ++j)
         {
             // if point belongs to plane ...
@@ -239,9 +238,79 @@ void GMath::get_sides(std::vector <std::vector <int>> &sides,
             if(std::abs(std::round(GMath::scalar_mult(v, planes[i])*1000)/1000) == 0.000)
             {
                 sides[i].push_back(j);
-                printf(" %d", j);
             }
         }
-        printf("\n");
     }
+}
+
+void GMath::convex_hull(std::vector <std::vector <int>> &sides, 
+        std::vector <std::vector <int>> connections)
+{
+    /* here 'll process sides to make them as "list" by connections */
+    std::vector <std::vector <int>> new_sides;
+    new_sides.resize(sides.size());
+    /* for all sides */
+    for(size_t i = 0; i < sides.size(); ++i) 
+    {
+        new_sides[i].push_back(sides[i][0]);
+        bool flag_root = false;
+        bool close_flag = false;
+
+        /* prev - back - <- upcoming */
+        int prev = sides[i][0];
+        int close = -1; 
+
+    endof:
+        if(new_sides[i].back() != close || flag_root == false)
+        {
+            /* for all con's for elem on side */
+            for(size_t m = 0; m < connections[new_sides[i].back()].size(); ++m)
+            {
+                /* for all elems on side */
+                for(size_t l = 0; l < sides[i].size(); ++l)
+                {
+                    /* first one "good" leaf */
+                    if(sides[i][l] == connections[new_sides[i].back()][m] && flag_root == false)
+                    {
+                        // its first neighbor
+                        if(close_flag == false)
+                        {
+                            close = sides[i][l];
+                            close_flag = true;
+                        }
+                        else
+                        {
+                            flag_root = true;
+                            new_sides[i].push_back(sides[i][l]);
+                            goto endof;
+                        } 
+                    }
+                    else
+                    {
+                        if(sides[i][l] == connections[new_sides[i].back()][m] && sides[i][l] != prev)
+                        {
+                            prev = new_sides[i].back();
+                            new_sides[i].push_back(sides[i][l]);
+                            goto endof;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    sides = new_sides;
+}
+
+std::vector <std::vector <int>> GMath::gypsy_delon(std::vector <std::vector <int>> sides)
+{
+    std::vector <std::vector <int>> result;
+    for(int i = 0; i < (int)sides.size(); ++i)
+    {
+        // number of triangles in poly (n - 2), where n -- number of vertecies
+        for(int j = 2; j < (int)sides[i].size(); ++j)
+        { 
+            result.push_back({sides[i][0], sides[i][j - 1], sides[i][j]});
+        }
+    }
+    return result;
 }

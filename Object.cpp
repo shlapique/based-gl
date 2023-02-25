@@ -32,6 +32,12 @@ void Object::create_pyramid(double a, double h)
      {5, 7, 8},
      {6, 0, 8},
      {0, 1, 2, 3, 4, 5, 6, 7}};
+    /* get sides out of planeset */
+    GMath::get_sides(sides, planeset, vertex);
+    /* get convex hull out of sides */
+    GMath::convex_hull(sides, connections);
+    /* get triangulation for every side */
+    this->tri = GMath::gypsy_delon(sides);
 }
 
 void Object::create_cube(double a)
@@ -57,99 +63,12 @@ void Object::create_cube(double a)
      {5, 2, 7},
      {6, 3, 4}};
     
-
-    /* sides */
+    /* get sides out of planeset */
     GMath::get_sides(sides, planeset, vertex);
-
-    /* here 'll process sides to make them as "list" by connections */
-    std::vector <std::vector <int>> new_sides;
-    new_sides.resize(sides.size());
-    /* for all sides */
-    for(size_t i = 0; i < sides.size(); ++i) 
-    {
-        new_sides[i].push_back(sides[i][0]);
-        bool flag_root = false;
-        bool close_flag = false;
-
-        /* prev - back - <- upcoming */
-        int prev = sides[i][0];
-        int close = -1; 
-
-
-endof:
-        if(new_sides[i].back() != close || flag_root == false)
-        {
-            /* printf("CLOSE = %d, new_sides[i].back() = %d \n", close, new_sides[i].back()); */
-            /* for all con's for elem on side */
-            for(size_t m = 0; m < connections[new_sides[i].back()].size(); ++m)
-            {
-                /* for all elems on side */
-                for(size_t l = 0; l < sides[i].size(); ++l)
-                {
-                    /* first one "good" leaf */
-                    if(sides[i][l] == connections[new_sides[i].back()][m] && flag_root == false)
-                    {
-                        // its first neighbor
-                        if(close_flag == false)
-                        {
-                            close = sides[i][l];
-                            close_flag = true;
-                            printf("FIRST NEIGHBOR (CLOSE) = %d \n", close);
-                        }
-                        else
-                        {
-                            printf("SECOND NEIGHBOR = %d \n", sides[i][l]);
-                            flag_root = true;
-                            prev = new_sides[i].back();
-                            new_sides[i].push_back(sides[i][l]);
-                            goto endof;
-                        } 
-                    }
-                    else
-                    {
-                        if(sides[i][l] == connections[new_sides[i].back()][m] && sides[i][l] != prev)
-                        {
-                            prev = new_sides[i].back();
-                            new_sides[i].push_back(sides[i][l]);
-                            goto endof;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    for(size_t i = 0; i < new_sides.size(); ++i)
-    {
-        printf("side[%d]: ", i);
-        for(size_t j = 0; j < new_sides[i].size(); ++j)
-        {
-            printf(" %d", new_sides[i][j]);
-        }
-        printf("\n");
-    }
-
-    this->sides = new_sides;
-    // here we're making array of triangles
-    for(int i = 0; i < (int)sides.size(); ++i)
-    {
-        // number of triangles in poly (n - 2), where n -- number of vertecies
-        for(int j = 2; j < (int)sides[i].size(); ++j)
-        { 
-            this->tri.push_back({sides[i][0], sides[i][j - 1], sides[i][j]});
-        }
-        printf("SIZE OF A SIDE VECTOR of %d plane is = %ld\n", i, sides[i].size());
-    }
-    // *** 
-
-    printf("ALL TRIANGLES after init()\n");
-    for(size_t t = 0; t < tri.size(); ++t)
-    {
-        printf(" [%ld] : { %d %d %d } \n", t, tri[t][0], tri[t][1], tri[t][2]);
-    }
-    
-    printf("number of tri = %ld\n", tri.size());
-    printf("number of sides = %ld\n", sides.size());
+    /* get convex hull out of sides */
+    GMath::convex_hull(sides, connections);
+    /* get triangulation for every side */
+    this->tri = GMath::gypsy_delon(sides);
 }
 
 
@@ -168,6 +87,13 @@ void Object::create_tetra(double a)
      {0, 2, 3},
      {1, 3, 0},
      {0, 1, 2}};
+
+    /* get sides out of planeset */
+    GMath::get_sides(sides, planeset, vertex);
+    /* get convex hull out of sides */
+    GMath::convex_hull(sides, connections);
+    /* get triangulation for every side */
+    this->tri = GMath::gypsy_delon(sides);
 }
 
 // a -- for bigger radius of bottom ellipse, b -- for smaller one.
@@ -233,91 +159,23 @@ void Object::create_trunc_cylinder(double a, double b, double h, int prec)
         printf("\n");
     }
 
-    //sides
-    // *** 
+    /* get sides out of planeset */
     GMath::get_sides(sides, planeset, vertex);
+    /* get convex hull out of sides */
+    GMath::convex_hull(sides, connections);
+    /* get triangulation for every side */
+    this->tri = GMath::gypsy_delon(sides);
 
-    /* here 'll process sides to make them as "list" by connections */
-    std::vector <std::vector <int>> new_sides;
-    new_sides.resize(sides.size());
-    /* for all sides */
-    for(size_t i = 0; i < sides.size(); ++i) 
-    {
-        /* printf("side [%d]: ", i); */
-        new_sides[i].push_back(sides[i][0]);
-        /* printf("root (%d) ", new_sides[i][0]); */
-        bool flag_root = false;
-        bool close_flag = false;
-
-        /* prev - back - <- upcoming */
-        int prev = sides[i][0];
-        int close = -1; 
-
-endof:
-        if(new_sides[i].back() != close || flag_root == false)
-        {
-            /* for all con's for elem on side */
-            printf("\nHEAD = %d \n", new_sides[i].back());
-            for(size_t m = 0; m < connections[new_sides[i].back()].size(); ++m)
-            {
-                printf("connnect [%d] \n", connections[new_sides[i].back()][m]);
-                /* for all elems on side */
-                for(size_t l = 0; l < sides[i].size(); ++l)
-                {
-                    /* first one "good" leaf */
-                    if(sides[i][l] == connections[new_sides[i].back()][m] && flag_root == false)
-                    {
-                        // its first neighbor
-                        if(close_flag == false)
-                        {
-                            close = sides[i][l];
-                            close_flag = true;
-                        }
-                        else
-                        {
-                            flag_root = true;
-                            new_sides[i].push_back(sides[i][l]);
-                            goto endof;
-                        } 
-                    }
-                    else
-                    {
-                        if(sides[i][l] == connections[new_sides[i].back()][m] && sides[i][l] != prev)
-                        {
-                            printf("root + %d = %d \n", new_sides[i].size(), sides[i][l]);
-                            prev = new_sides[i].back();
-                            new_sides[i].push_back(sides[i][l]);
-                            goto endof;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    printf("\n SIDES as convex closed hull\n");
-    for(size_t i = 0; i < new_sides.size(); ++i)
-    {
-        printf("side[%d]: ", i);
-        for(size_t j = 0; j < new_sides[i].size(); ++j)
-        {
-            printf(" %d", new_sides[i][j]);
-        }
-        printf("\n");
-    }
-
-    this->sides = new_sides;
-    // here we're making array of triangles
-    for(int i = 0; i < (int)sides.size(); ++i)
-    {
-        // number of triangles in poly (n - 2), where n -- number of vertecies
-        for(int j = 2; j < (int)sides[i].size(); ++j)
-        { 
-            this->tri.push_back({sides[i][0], sides[i][j - 1], sides[i][j]});
-        }
-        printf("SIZE OF A SIDE VECTOR of %d plane is = %ld\n", i, sides[i].size());
-    }
-    // *** 
+    /* printf("\n SIDES as convex hull\n"); */
+    /* for(size_t i = 0; i < sides.size(); ++i) */
+    /* { */
+    /*     printf("side[%d]: ", i); */
+    /*     for(size_t j = 0; j < sides[i].size(); ++j) */
+    /*     { */
+    /*         printf(" %d", sides[i][j]); */
+    /*     } */
+    /*     printf("\n"); */
+    /* } */
 
     printf("ALL TRIANGLES after init()\n");
     for(size_t t = 0; t < tri.size(); ++t)
