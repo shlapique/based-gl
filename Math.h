@@ -33,11 +33,13 @@ class GMath
         static std::vector <Edge> edges_to_render(std::vector <V4>, std::vector <std::vector <int>>, 
                 std::vector <Point>);
         static std::vector <std::vector <Point>> tri_to_render(std::vector <V4>, 
-                std::vector <std::vector <Point *>>, std::vector <Point>);
+                std::vector <std::vector <int>>, std::vector <Point>);
         static std::vector <V4> visibility(std::vector <V4>, V4);
         static std::vector <std::vector <Point>> delaunay(std::vector <Point>);
         static std::vector <double> brightness(std::vector <V4>, 
                 std::vector <std::vector <Point>>, V4);
+        static void get_sides(std::vector <std::vector <int>> &, std::vector <std::vector <int>>,
+                std::vector <Point>);
 };
 
 #endif

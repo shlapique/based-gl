@@ -42,6 +42,8 @@ int main(int argc, char *argv[])
             Scene scene(renderer, camera, light);
             scene.create_trunc_cylinder(500, 300, 500, 20);
             /* scene.create_cube(500); */
+            /* scene.create_tetra(500); */
+            /* scene.create_pyramid(500, 1000); */
             //+++++++++++++++
 
             while (!done) 

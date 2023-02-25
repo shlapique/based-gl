@@ -144,9 +144,14 @@ void Scene::draw_segment(SDL_Renderer *renderer, Point a, Point b, Color color)
 }
 
 
-void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges, std::vector <std::vector <Point>> tri_out, std::vector <double> bright, Color color_carcas, Color color_sides)
+void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges, 
+        std::vector <std::vector <Point>> tri_out, 
+        std::vector <double> bright, Color color_carcas, 
+        Color color_sides)
 {
-    SDL_SetRenderDrawColor(renderer, color_carcas.r, color_carcas.g, color_carcas.b, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, color_carcas.r, color_carcas.g, 
+            color_carcas.b, SDL_ALPHA_OPAQUE);
+
     // 0 stands for a, 1 stands for b
     for(size_t i = 0; i < edges.size(); ++i)
     {
@@ -159,7 +164,6 @@ void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges, std::vect
         Uint8 real_r = color_sides.r * bright[j] / 100;
         Uint8 real_g = color_sides.g * bright[j] / 100;
         Uint8 real_b = color_sides.b * bright[j] / 100;
-        printf("j %d = %d, %d, %d \n", j, real_r, real_g, real_b);
         std::vector <SDL_Vertex> verts =
         {{SDL_FPoint{(float)tri_out[j][0].x, (float)tri_out[j][0].y}, SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }},
             {SDL_FPoint{(float)tri_out[j][1].x, (float)tri_out[j][1].y}, SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }},
@@ -174,7 +178,6 @@ void Scene::central_projection(Point origin, double k)
             camera);
     this->edges = GMath::edges_to_render(visible_planesets, connections, vertex);
     this->tri_out = GMath::tri_to_render(visible_planesets, tri, vertex);
-    printf("SIZE OF TRI OUT IN SCENE CPP is = %ld\n", tri_out.size());
     this->bright = GMath::brightness(visible_planesets, tri_out, light);
     edges_central_projection(origin, k);
     tri_central_projection(origin, k);

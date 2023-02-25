@@ -175,7 +175,7 @@ std::vector <double> GMath::brightness(std::vector <V4> planes,
 }
 
 std::vector <std::vector <Point>> GMath::tri_to_render(std::vector <V4> planes, 
-        std::vector <std::vector <Point *>> tri, std::vector <Point> obj)
+        std::vector <std::vector <int>> tri, std::vector <Point> obj)
 {
     std::vector <std::vector <Point>> result;
     bool flag = true; // green light to push_back in result
@@ -187,10 +187,10 @@ std::vector <std::vector <Point>> GMath::tri_to_render(std::vector <V4> planes,
             for(int t = 0; t < tri[j].size(); ++t) // t = {0 .. 2}
             {
                 // if point belongs to plane ...
-                V4 v = {tri[j][t]->x, tri[j][t]->y, tri[j][t]->z, 1};
+                V4 v = {obj[tri[j][t]].x, obj[tri[j][t]].y, obj[tri[j][t]].z, 1};
                 if(std::abs(std::round(scalar_mult(v, planes[i])*1000)/1000) == 0.000)
                 {
-                    tmp.push_back(*(tri[j][t]));
+                    tmp.push_back(obj[tri[j][t]]); 
                 }
                 else
                 {
@@ -222,4 +222,26 @@ std::vector <V4> GMath::visibility(std::vector <V4> list, V4 camera)
         }
     }
     return result;
+}
+
+void GMath::get_sides(std::vector <std::vector <int>> &sides, 
+        std::vector <std::vector <int>> planeset, std::vector <Point> vertex)
+{
+    std::vector <V4> planes = GMath::get_planeset(vertex, planeset);
+    sides.resize(planeset.size());
+    for(size_t i = 0; i < planes.size(); ++i)
+    {
+        printf("\tSIDE[%d]: ", i);
+        for(size_t j = 0; j < vertex.size(); ++j)
+        {
+            // if point belongs to plane ...
+            V4 v = {vertex[j].x, vertex[j].y, vertex[j].z, 1};
+            if(std::abs(std::round(GMath::scalar_mult(v, planes[i])*1000)/1000) == 0.000)
+            {
+                sides[i].push_back(j);
+                printf(" %d", j);
+            }
+        }
+        printf("\n");
+    }
 }
