@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-Wall
 OBJS=main.o Math.o Scene.o Object.o
-LINKER_FLAGS=-lSDL2
+LINKER_FLAGS=-lSDL2 -lSDL2_ttf
 TARGET=out
 
 all: $(TARGET)

@@ -10,8 +10,6 @@ class GMath
 {
     public:
         static double scalar_mult(V4, V4);
-        static double scalar_mult(V3, V3);
-        static V3 scalar_mult(V3, double);
         static V4 scalar_mult(V4, double);
         static double modul(V4);
 

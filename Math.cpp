@@ -7,18 +7,6 @@ double GMath::scalar_mult(V4 vec1, V4 vec2)
     return result;
 }
 
-double GMath::scalar_mult(V3 vec1, V3 vec2)
-{
-    double result = vec1.x * vec2.x + vec1.y * vec2.y
-                    + vec1.z * vec2.z;
-    return result;
-}
-
-V3 GMath::scalar_mult(V3 vec, double a)
-{
-    return {vec.x * a, vec.y * a, vec.z * a};
-}
-
 //for normalize(V4)
 V4 GMath::scalar_mult(V4 vec, double g)
 {

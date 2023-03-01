@@ -153,10 +153,10 @@ void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges,
             color_carcas.b, SDL_ALPHA_OPAQUE);
 
     // 0 stands for a, 1 stands for b
-    for(size_t i = 0; i < edges.size(); ++i)
-    {
-        /* draw_segment(renderer, edges[i].a, edges[i].b, color_carcas); */
-    }
+    /* for(size_t i = 0; i < edges.size(); ++i) */
+    /* { */
+    /*     /1* draw_segment(renderer, edges[i].a, edges[i].b, color_carcas); *1/ */
+    /* } */
 
     SDL_SetRenderDrawColor(renderer, color_sides.r, color_sides.g, color_sides.b, SDL_ALPHA_OPAQUE);
     for(size_t j = 0; j < tri_out.size(); ++j)
@@ -186,4 +186,20 @@ void Scene::central_projection(Point origin, double k)
 void Scene::draw(Color color_carcas, Color color_sides)
 {
     draw_obj(renderer, edges, tri_out, bright, color_carcas, color_sides);
+}
+
+void Scene::render_text(SDL_Renderer *renderer, int x, int y, char *text,
+        TTF_Font *font, SDL_Rect *rect, SDL_Color *color)
+{
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    surface = TTF_RenderText_Solid(font, text, *color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    rect->x = x;
+    rect->y = y;
+    rect->w = surface->w;
+    rect->h = surface->h;
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(renderer, texture, NULL, rect);
+    SDL_DestroyTexture(texture);
 }

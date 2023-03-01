@@ -5,6 +5,7 @@
 #include "Math.h"
 #include "Object.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 class Scene : public Object
 {
@@ -37,6 +38,9 @@ class Scene : public Object
 
         //=====
         void draw(Color color_carcas, Color color_sides);
+
+        void render_text(SDL_Renderer *, int, int, char *,
+            TTF_Font *, SDL_Rect *, SDL_Color *);
 
     private:
         SDL_Renderer *renderer = NULL; 

@@ -1,6 +1,9 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
 #include <cmath>
 #include <vector>
+#include <ctime>
 
 #include "Core.h"
 #include "Math.h"
@@ -28,6 +31,14 @@ int main(int argc, char *argv[])
     /* Color color_sides = {85, 36, 61}; */
     Color color_sides = {231, 222, 111};
     ///
+    ///
+    /* for fps counter */
+    clock_t cur_ticks, delta_ticks;
+    clock_t fps = 0;
+    SDL_Rect rect;
+    char text[200];
+    SDL_Color text_color{155, 38, 182, 255};
+    /* fps */               
 
     if (SDL_Init(SDL_INIT_VIDEO) == 0) 
     {
@@ -37,17 +48,25 @@ int main(int argc, char *argv[])
         if (SDL_CreateWindowAndRenderer(size_x, size_y, SDL_WINDOW_RESIZABLE, &window, &renderer) == 0) 
         {
             SDL_bool done = SDL_FALSE;
+            TTF_Init();
+            TTF_Font * font = TTF_OpenFont("./font/SweetsSmile.ttf", 23);
+            if (font == NULL)
+            {
+                printf("error ! font not found\n");
+                exit(EXIT_FAILURE);
+            }
 
             //+++++++++++++++
             Scene scene(renderer, camera, light);
-            /* scene.create_trunc_cylinder(500, 300, 500, 20); */
-            scene.create_cube(500);
+            scene.create_trunc_cylinder(500, 300, 500, 200);
+            /* scene.create_cube(500); */
             /* scene.create_tetra(500); */
             /* scene.create_pyramid(500, 1000); */
             //+++++++++++++++
 
             while (!done) 
             {
+                cur_ticks = clock();
                 SDL_Event event;
                 int x, y;
                 Uint32 buttons;
@@ -68,11 +87,16 @@ int main(int argc, char *argv[])
                 mult = 0;
                 //////
 
+                delta_ticks = clock() - cur_ticks;
+                if(delta_ticks > 0)
+                {
+                    fps = CLOCKS_PER_SEC / delta_ticks;
+                }   
+                sprintf(text, "%ld", fps); 
+                scene.render_text(renderer, 0, 0, text, font, &rect, &text_color);
                 //+++++
-
-                //+++++
-
                 SDL_RenderPresent(renderer);
+                //+++++
                 while (SDL_PollEvent(&event))
                 {
                     switch (event.type)
@@ -160,6 +184,8 @@ int main(int argc, char *argv[])
                 SDL_Delay(20);
             }
         }
+
+        TTF_Quit();
 
         if (renderer) 
         {
