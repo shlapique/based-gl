@@ -64,8 +64,10 @@ void Scene::tri_central_projection(Point origin, double k)
     for(size_t i = 0; i < tri_out.size(); ++i)
     {
         this->tri_out[i] = {GMath::real_point(origin, point_central_projection(tri_out[i][0], k)),
-                    GMath::real_point(origin, point_central_projection(tri_out[i][1], k)), GMath::real_point(origin, point_central_projection(tri_out[i][2], k))};
+                    GMath::real_point(origin, point_central_projection(tri_out[i][1], k)), 
+                    GMath::real_point(origin, point_central_projection(tri_out[i][2], k))};
     }
+    /* printf("SCENE CENTRAL PROJECTION WORKS FINE !"); */
 }
 
 
@@ -82,7 +84,8 @@ void Scene::edges_isometric_projection(Point origin)
 {
     for(size_t i = 0; i < edges.size(); ++i)
     {
-        this->edges[i] = {GMath::real_point(origin, edges[i].a), GMath::real_point(origin, edges[i].b)};
+        this->edges[i] = {GMath::real_point(origin, edges[i].a), 
+            GMath::real_point(origin, edges[i].b)};
     }
 }
 
@@ -135,6 +138,7 @@ void Scene::rotate(Axis axis, double mult, int dir, double k)
                 break;
         }
     }
+    /* printf("ROTATION WORKS FINE !\n"); */
 }
 
 void Scene::draw_segment(SDL_Renderer *renderer, Point a, Point b, Color color)
@@ -165,9 +169,12 @@ void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges,
         Uint8 real_g = color_sides.g * bright[j] / 100;
         Uint8 real_b = color_sides.b * bright[j] / 100;
         std::vector <SDL_Vertex> verts =
-        {{SDL_FPoint{(float)tri_out[j][0].x, (float)tri_out[j][0].y}, SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }},
-            {SDL_FPoint{(float)tri_out[j][1].x, (float)tri_out[j][1].y}, SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }},
-            {SDL_FPoint{(float)tri_out[j][2].x, (float)tri_out[j][2].y}, SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }}};
+        {{SDL_FPoint{(float)tri_out[j][0].x, (float)tri_out[j][0].y}, 
+             SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }},
+            {SDL_FPoint{(float)tri_out[j][1].x, (float)tri_out[j][1].y}, 
+                SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }},
+            {SDL_FPoint{(float)tri_out[j][2].x, (float)tri_out[j][2].y}, 
+                SDL_Color{real_r, real_g, real_b, 255 }, SDL_FPoint{ 0 }}};
         SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
     }
 }
@@ -176,16 +183,19 @@ void Scene::central_projection(Point origin, double k)
 {
     std::vector <V4> visible_planesets = GMath::visibility(GMath::get_planeset(vertex, planeset), 
             camera);
-    this->edges = GMath::edges_to_render(visible_planesets, connections, vertex);
+
+    /* this->edges = GMath::edges_to_render(visible_planesets, connections, vertex); */
     this->tri_out = GMath::tri_to_render(visible_planesets, tri, vertex);
     this->bright = GMath::brightness(visible_planesets, tri_out, light);
-    edges_central_projection(origin, k);
+
+    /* edges_central_projection(origin, k); */
     tri_central_projection(origin, k);
 }
 
 void Scene::draw(Color color_carcas, Color color_sides)
 {
     draw_obj(renderer, edges, tri_out, bright, color_carcas, color_sides);
+    /* printf("DRAW WORKS FINE !\n"); */
 }
 
 void Scene::render_text(SDL_Renderer *renderer, int x, int y, char *text,

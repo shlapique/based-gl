@@ -35,8 +35,10 @@ V4 GMath::plane_equation(Point p1, Point p2, Point p3)
     p3 = {p3.x - p1.x, p3.y - p1.y, p3.z - p1.z};
     p1 = {-p1.x, -p1.y, -p1.z};
 
-    Point minors= {(p2.y * p3.z - p3.y * p2.z), (p2.x * p3.z - p3.x * p2.z), (p2.x * p3.y - p3.x * p2.y)};
-    V4 result = {minors.x, -minors.y, minors.z, p1.x * minors.x + (-1) * p1.y * minors.y + p1.z * minors.z};
+    Point minors= {(p2.y * p3.z - p3.y * p2.z), (p2.x * p3.z - p3.x * p2.z), 
+        (p2.x * p3.y - p3.x * p2.y)};
+    V4 result = {minors.x, -minors.y, minors.z, p1.x * minors.x + (-1) * p1.y * minors.y + p1.z * 
+        minors.z};
     //printf("%f, %f, %f, %f \n", result.a, result.b, result.c, result.d);
     return result;
 }
@@ -47,7 +49,8 @@ std::vector <V4> GMath::get_planeset(std::vector <Point> vertex,
     std::vector <V4> result(planeset.size());
     for(size_t i = 0; i < planeset.size(); ++i)
     {
-        result[i] = plane_equation(vertex[planeset[i][0]], vertex[planeset[i][1]], vertex[planeset[i][2]]);
+        result[i] = plane_equation(vertex[planeset[i][0]], vertex[planeset[i][1]], 
+                vertex[planeset[i][2]]);
     }
     return result;
 }
@@ -204,6 +207,8 @@ std::vector <V4> GMath::visibility(std::vector <V4> list, V4 camera)
     std::vector <V4> result;
     for(size_t i = 0; i < list.size(); ++i)
     {
+        /* change for clockwise or counterclockwise systems! */
+         
         if(scalar_mult(camera, list[i]) > 0)
         {
             result.push_back(list[i]);
@@ -289,6 +294,7 @@ void GMath::convex_hull(std::vector <std::vector <int>> &sides,
     sides = new_sides;
 }
 
+/* works only for convex hull!! */
 std::vector <std::vector <int>> GMath::gypsy_delon(std::vector <std::vector <int>> sides)
 {
     std::vector <std::vector <int>> result;

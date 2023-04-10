@@ -2,9 +2,16 @@
 #define __OBJECT_H__
 
 #include <vector>
-#include <list>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+
 #include "Core.h"
 #include "Math.h"
+
+const int MAX_FILE_NAME   = 1024;
+const int MAX_LINE_LENGTH = 1024;
 
 class Object 
 {
@@ -14,6 +21,10 @@ class Object
         void create_cube(double a);
         void create_tetra(double a);
         void create_trunc_cylinder(double a, double b, double h, int prec);
+        void load_from_file(const char*);
+        void parse_vertex_coords(std::string);
+        void parse_vertex_normals(std::string);
+        void parse_faces(std::string);
 
         std::vector <Point> vertex;
         std::vector <std::vector <int>> planeset;

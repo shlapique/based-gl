@@ -8,10 +8,10 @@ O(n^inf) 😋
 
 ### openSUSE Tumbleweed 
 ```bash
-sudo zypper in libSDL2-2_0-0 SDL2-devel
+sudo zypper in libSDL2-2_0-0 SDL2-devel SDL2_ttf-devel
 ```
 
 ### Fedora 36
 ```bash
-sudo dnf install SDL2 SDL2-devel 
+sudo dnf install SDL2 SDL2-devel SDL2_ttf SDL2_ttf-devel
 ```

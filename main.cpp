@@ -4,11 +4,14 @@
 #include <cmath>
 #include <vector>
 #include <ctime>
+#include <stdio.h>
 
 #include "Core.h"
 #include "Math.h"
 #include "Scene.h"
 #include "Object.h"
+
+/* In my system I use counterclockwise system of coords... */ 
  
 int main(int argc, char *argv[])
 {
@@ -45,7 +48,8 @@ int main(int argc, char *argv[])
         SDL_Window *window = NULL;
         SDL_Renderer *renderer = NULL;
 
-        if (SDL_CreateWindowAndRenderer(size_x, size_y, SDL_WINDOW_RESIZABLE, &window, &renderer) == 0) 
+        if (SDL_CreateWindowAndRenderer(size_x, size_y, SDL_WINDOW_RESIZABLE, 
+                    &window, &renderer) == 0) 
         {
             SDL_bool done = SDL_FALSE;
             TTF_Init();
@@ -58,7 +62,14 @@ int main(int argc, char *argv[])
 
             //+++++++++++++++
             Scene scene(renderer, camera, light);
-            scene.create_trunc_cylinder(500, 300, 500, 200);
+            /* scene.load_from_file("./models/teapot/cube.obj"); */
+            /* scene.load_from_file("./models/road/road.obj"); */
+            /* scene.load_from_file("./models/Gun/Gun.obj"); */
+            /* scene.load_from_file("./models/tree/tree.obj"); */
+            /* scene.load_from_file("./models/mountains/mountains.obj"); */
+            scene.load_from_file("./models/Umbrella/Umbrella.obj");
+
+            /* scene.create_trunc_cylinder(500, 300, 500, 200); */
             /* scene.create_cube(500); */
             /* scene.create_tetra(500); */
             /* scene.create_pyramid(500, 1000); */
@@ -112,7 +123,6 @@ int main(int argc, char *argv[])
                                     scale += 0.1;
                                     scale_time += 0.1;
                                     scene.transform(scale);
-                                    //printf("SCALE = %f, scale_time = %f\n", scale, scale_time);
                                     scale = 1;
                                 }
                             }
@@ -123,12 +133,11 @@ int main(int argc, char *argv[])
                                     scale -= 0.1;
                                     scale_time -= 0.1;
                                     scene.transform(scale);
-                                    //printf("SCALE = %f, scale_time = %f\n", scale, scale_time);
                                     scale = 1;
                                 }
                                 else
                                 {
-                                    //printf("SCALE arg is < 0.1!!!\n");
+                                    printf("SCALE arg is < 0.1!!!\n");
                                 }
                             }
                             break;                            
