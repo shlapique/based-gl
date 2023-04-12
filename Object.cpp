@@ -169,18 +169,6 @@ void Object::create_trunc_cylinder(double a, double b, double h, int prec)
     this->tri = GMath::gypsy_delon(sides);
     printf("tri size from tunc cyl: %ld \n", tri.size());
 
-
-    /* printf("\n SIDES as convex hull\n"); */
-    /* for(size_t i = 0; i < sides.size(); ++i) */
-    /* { */
-    /*     printf("side[%d]: ", i); */
-    /*     for(size_t j = 0; j < sides[i].size(); ++j) */
-    /*     { */
-    /*         printf(" %d", sides[i][j]); */
-    /*     } */
-    /*     printf("\n"); */
-    /* } */
-
     printf("ALL TRIANGLES after init()\n");
     for(size_t t = 0; t < tri.size(); ++t)
     {

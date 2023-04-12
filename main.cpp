@@ -65,9 +65,9 @@ int main(int argc, char *argv[])
             /* scene.load_from_file("./models/teapot/cube.obj"); */
             /* scene.load_from_file("./models/road/road.obj"); */
             /* scene.load_from_file("./models/Gun/Gun.obj"); */
-            /* scene.load_from_file("./models/tree/tree.obj"); */
+            scene.load_from_file("./models/tree/tree.obj");
             /* scene.load_from_file("./models/mountains/mountains.obj"); */
-            scene.load_from_file("./models/Umbrella/Umbrella.obj");
+            /* scene.load_from_file("./models/Umbrella/Umbrella.obj"); */
 
             /* scene.create_trunc_cylinder(500, 300, 500, 200); */
             /* scene.create_cube(500); */
