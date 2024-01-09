@@ -62,17 +62,15 @@ int main(int argc, char *argv[])
 
             //+++++++++++++++
             Scene scene(renderer, camera, light);
-            /* scene.load_from_file("./models/teapot/cube.obj"); */
+            scene.load_from_file("./models/teapot/cube.obj");
             /* scene.load_from_file("./models/road/road.obj"); */
             /* scene.load_from_file("./models/Gun/Gun.obj"); */
-            scene.load_from_file("./models/tree/tree.obj");
+            /* scene.load_from_file("./models/tree/tree.obj"); */
             /* scene.load_from_file("./models/mountains/mountains.obj"); */
             /* scene.load_from_file("./models/Umbrella/Umbrella.obj"); */
-
-            /* scene.create_trunc_cylinder(500, 300, 500, 200); */
-            /* scene.create_cube(500); */
-            /* scene.create_tetra(500); */
-            /* scene.create_pyramid(500, 1000); */
+            /* scene.load_from_file("./models/moai/untitled.obj"); */
+            /* scene.load_from_file("./models/smth/smth.obj"); */
+            /* scene.load_from_file("./models/lowpolycat/cat.obj"); */
             //+++++++++++++++
 
             while (!done) 

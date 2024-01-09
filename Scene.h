@@ -34,7 +34,7 @@ class Scene : public Object
 
         void draw_segment(SDL_Renderer *renderer, Point a, Point b, Color color);
         void draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges, 
-                std::vector <std::vector <Point>>, std::vector <double>, Color, Color);
+                std::vector <double>, Color, Color);
 
         //=====
         void draw(Color color_carcas, Color color_sides);

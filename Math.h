@@ -2,9 +2,12 @@
 #define __MATH_H__
 
 #include <cmath>
+#include <algorithm>
 #include "Core.h"
 #include <vector>
+#include <stack>
 #include <cstdio>
+
 
 class GMath
 {
@@ -40,6 +43,10 @@ class GMath
                 std::vector <Point>);
         static void convex_hull(std::vector <std::vector <int>> &, std::vector <std::vector <int>>);
         static std::vector <std::vector <int>> gypsy_delon(std::vector <std::vector <int>>);
+        
+        static double side_radius(std::vector <double>);
+        static std::vector <Point> flatten(std::vector <int>, std::vector <Point>);
+        static std::vector <int> chull(std::vector <int>, std::vector <Point>);
 };
 
 #endif

@@ -33,7 +33,6 @@ struct Color
     unsigned char b;
 };
 
-
 enum Axis 
 {
     X,  

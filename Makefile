@@ -13,7 +13,7 @@ $(TARGET): $(OBJS)
 debug: $(DBG_TARGET)
 
 $(DBG_TARGET): $(OBJS)
-	$(CC) -g $(CFLAGS) $(LINKER_FLAGS) -o $(DBG_TARGET) $(OBJS)
+	$(CC) $(CFLAGS) $(LINKER_FLAGS) -o $(DBG_TARGET) $(OBJS)
 
 main.o: main.cpp Math.h Core.h Scene.h Object.h
 	$(CC) $(CFLAGS) -c main.cpp

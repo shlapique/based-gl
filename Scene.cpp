@@ -63,13 +63,12 @@ void Scene::tri_central_projection(Point origin, double k)
 {
     for(size_t i = 0; i < tri_out.size(); ++i)
     {
-        this->tri_out[i] = {GMath::real_point(origin, point_central_projection(tri_out[i][0], k)),
-                    GMath::real_point(origin, point_central_projection(tri_out[i][1], k)), 
-                    GMath::real_point(origin, point_central_projection(tri_out[i][2], k))};
+        for(size_t j = 0; j < 3; ++j)
+            tri_out[i][j] = GMath::real_point(origin, 
+                    point_central_projection(tri_out[i][j], k));
     }
     /* printf("SCENE CENTRAL PROJECTION WORKS FINE !"); */
 }
-
 
 void Scene::vertex_isometric_projection(Point origin)
 {
@@ -91,10 +90,10 @@ void Scene::edges_isometric_projection(Point origin)
 
 void Scene::isometric_projection(Point origin)
 {
-    this->edges = GMath::edges_to_render(GMath::visibility(GMath::get_planeset(vertex, planeset), 
-                camera), 
-            connections, vertex);
-    edges_isometric_projection(origin);
+    /* this->edges = GMath::edges_to_render(GMath::visibility(GMath::get_planeset(vertex, planeset), */ 
+    /*             camera), */ 
+    /*         connections, vertex); */
+    /* edges_isometric_projection(origin); */
 }
 
 void Scene::transform(double k)
@@ -149,19 +148,10 @@ void Scene::draw_segment(SDL_Renderer *renderer, Point a, Point b, Color color)
 
 
 void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges, 
-        std::vector <std::vector <Point>> tri_out, 
         std::vector <double> bright, Color color_carcas, 
         Color color_sides)
 {
-    SDL_SetRenderDrawColor(renderer, color_carcas.r, color_carcas.g, 
-            color_carcas.b, SDL_ALPHA_OPAQUE);
-
-    // 0 stands for a, 1 stands for b
-    /* for(size_t i = 0; i < edges.size(); ++i) */
-    /* { */
-    /*     /1* draw_segment(renderer, edges[i].a, edges[i].b, color_carcas); *1/ */
-    /* } */
-
+    /* printf("TRI ON DRAW: %d\n", (int)tri_out.size()); */
     SDL_SetRenderDrawColor(renderer, color_sides.r, color_sides.g, color_sides.b, SDL_ALPHA_OPAQUE);
     for(size_t j = 0; j < tri_out.size(); ++j)
     {
@@ -181,11 +171,15 @@ void Scene::draw_obj(SDL_Renderer *renderer, std::vector <Edge> edges,
 
 void Scene::central_projection(Point origin, double k)
 {
-    std::vector <V4> visible_planesets = GMath::visibility(GMath::get_planeset(vertex, planeset), 
-            camera);
+    this->planeset = GMath::get_planeset(vertex, sides);
+
+    std::vector <V4> visible_planesets = GMath::visibility(planeset, camera);
+    /* printf("PLANESETS TO DRAW: %d\n", (int)visible_planesets.size()); */
 
     /* this->edges = GMath::edges_to_render(visible_planesets, connections, vertex); */
+
     this->tri_out = GMath::tri_to_render(visible_planesets, tri, vertex);
+
     this->bright = GMath::brightness(visible_planesets, tri_out, light);
 
     /* edges_central_projection(origin, k); */
@@ -194,7 +188,7 @@ void Scene::central_projection(Point origin, double k)
 
 void Scene::draw(Color color_carcas, Color color_sides)
 {
-    draw_obj(renderer, edges, tri_out, bright, color_carcas, color_sides);
+    draw_obj(renderer, edges, bright, color_carcas, color_sides);
     /* printf("DRAW WORKS FINE !\n"); */
 }
 

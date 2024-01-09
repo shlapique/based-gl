@@ -7,14 +7,14 @@ num_triang=0
 file=$1
 while read line; 
 do 
-    mode="$(echo "$line" | awk '{print $1}')"
+    mode=${line%% *}
     case $mode in
         v)
             ((num_vert=num_vert+1))
             ;;
         f)
             ((num_faces=num_faces+1))
-            if [ "$(echo "$line" | awk '{print NF}')" == 3 ];
+            if [ "$(echo "$line" | wc -w)" == 3 ];
             then
                 ((num_triang=num_triang+1))
             fi

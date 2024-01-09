@@ -44,13 +44,13 @@ V4 GMath::plane_equation(Point p1, Point p2, Point p3)
 }
 
 std::vector <V4> GMath::get_planeset(std::vector <Point> vertex, 
-        std::vector <std::vector <int>> planeset)
+        std::vector <std::vector <int>> sides)
 {
-    std::vector <V4> result(planeset.size());
-    for(size_t i = 0; i < planeset.size(); ++i)
+    std::vector <V4> result(sides.size());
+    for(size_t i = 0; i < sides.size(); ++i)
     {
-        result[i] = plane_equation(vertex[planeset[i][0]], vertex[planeset[i][1]], 
-                vertex[planeset[i][2]]);
+        result[i] = plane_equation(vertex[sides[i][0]], vertex[sides[i][1]], 
+                vertex[sides[i][2]]);
     }
     return result;
 }
@@ -60,8 +60,7 @@ double GMath::dist_flat(Point p1, Point p2)
 {
     double a = std::abs(p2.x - p1.x);
     double b = std::abs(p2.y - p1.y);
-    double result = std::sqrt(std::pow(a, 2) + std::pow(b, 2));
-    return result;
+    return std::sqrt(std::pow(a, 2) + std::pow(b, 2));
 }
 
 //in 3d
@@ -70,8 +69,7 @@ double GMath::dist_stereo(Point p1, Point p2)
     double a = std::abs(p2.x - p1.x);
     double b = std::abs(p2.y - p1.y);
     double c = std::abs(p2.z - p1.z);
-    double result = std::sqrt(std::pow(a, 2) + std::pow(b, 2) + std::pow(c, 2));
-    return result;
+    return std::sqrt(std::pow(a, 2) + std::pow(b, 2) + std::pow(c, 2));
 }
 
 V4 GMath::normalize(V4 vec)
@@ -83,15 +81,13 @@ V4 GMath::normalize(V4 vec)
 
 Point GMath::real_point(Point origin, Point a)
 {   
-    Point point = {origin.x + a.x, origin.y - a.y, origin.z + a.z};
-    return point;
+    return {origin.x + a.x, origin.y - a.y, origin.z + a.z};
 }
 
 //screen center
 Point GMath::find_origin(int size_x, int size_y, double k)
 {
-    Point point = {std::round(size_x / 2), std::round(size_y / 2), k};
-    return point;
+    return {std::round(size_x / 2), std::round(size_y / 2), k};
 }
 
 std::vector <Edge> GMath::edges_to_render(std::vector <V4> planes, 
@@ -217,25 +213,6 @@ std::vector <V4> GMath::visibility(std::vector <V4> list, V4 camera)
     return result;
 }
 
-void GMath::get_sides(std::vector <std::vector <int>> &sides, 
-        std::vector <std::vector <int>> planeset, std::vector <Point> vertex)
-{
-    std::vector <V4> planes = GMath::get_planeset(vertex, planeset);
-    sides.resize(planeset.size());
-    for(size_t i = 0; i < planes.size(); ++i)
-    {
-        for(size_t j = 0; j < vertex.size(); ++j)
-        {
-            // if point belongs to plane ...
-            V4 v = {vertex[j].x, vertex[j].y, vertex[j].z, 1};
-            if(std::abs(std::round(GMath::scalar_mult(v, planes[i])*1000)/1000) == 0.000)
-            {
-                sides[i].push_back(j);
-            }
-        }
-    }
-}
-
 void GMath::convex_hull(std::vector <std::vector <int>> &sides, 
         std::vector <std::vector <int>> connections)
 {
@@ -306,5 +283,153 @@ std::vector <std::vector <int>> GMath::gypsy_delon(std::vector <std::vector <int
             result.push_back({sides[i][0], sides[i][j - 1], sides[i][j]});
         }
     }
+    return result;
+}
+
+
+/* GSA */
+struct Dublin
+{
+    Point p;
+    int index;
+};
+
+double GMath::side_radius(std::vector <double> nums)
+{
+    if(nums.empty())
+        return 0.0;
+    double min = *std::min_element(nums.begin(), nums.end());
+    double max = *std::max_element(nums.begin(), nums.end());
+    return std::abs(max - min);
+}
+
+/* returns 2d flat projection of a 3d plane */
+std::vector <Point> GMath::flatten(std::vector <int> side, std::vector <Point> vertex)
+{
+    std::vector <Point> result(side.size());
+    std::vector <double> x_nums;
+    std::vector <double> y_nums;
+    std::vector <double> z_nums;
+    /* find the axis with smallest projection radius */
+    for(size_t i = 0; i < side.size(); ++i)
+    {
+        x_nums.push_back(vertex[side[i]].x);
+        y_nums.push_back(vertex[side[i]].y);
+        z_nums.push_back(vertex[side[i]].z);
+    }
+    double x_nums_r = GMath::side_radius(x_nums); 
+    double y_nums_r = GMath::side_radius(y_nums); 
+    double z_nums_r = GMath::side_radius(z_nums); 
+    double key = std::min(std::min(x_nums_r, y_nums_r), z_nums_r);
+    /* printf("key from flatten: %f \n", key); */
+    if(key == x_nums_r)
+        for(size_t i = 0; i < side.size(); ++i)
+            result[i] = {y_nums[i], z_nums[i]};
+    if(key == y_nums_r)
+        for(size_t i = 0; i < side.size(); ++i)
+            result[i] = {x_nums[i], z_nums[i]};
+    if(key == z_nums_r)
+        for(size_t i = 0; i < side.size(); ++i)
+            result[i] = {x_nums[i], y_nums[i]};
+    return result;
+}
+
+/* GSA */
+int find_wise(Point a, Point b, Point c)
+{
+    int val = (b.y - a.y) * (c.x - b.x)
+        - (b.x - a.x) * (c.y - b.y);
+    if(val == 0)
+        return 0;
+    return (val > 0) ? 1 : 2;
+    /* 2 -- counterclock wise */
+}
+
+/* GSA */
+struct compare_by_angle
+{
+    Point p0;
+    compare_by_angle(Point p0) {this->p0 = p0;}
+    inline bool operator()(const Dublin &a, const Dublin &b)
+    {
+        int wise = find_wise(p0, a.p, b.p);
+        if(wise == 0)
+            return (GMath::dist_flat(p0, b.p) >= GMath::dist_flat(p0, a.p)) ? true : false;
+        return (wise == 2) ? true : false;
+    }
+};
+
+/* GSA */
+Dublin after_top(std::stack <Dublin> S)
+{
+    Dublin p = S.top();
+    S.pop();
+    Dublin res = S.top();
+    S.push(p);
+    return res;
+}
+
+/* Graham Scan Algorithm */
+/* FIXME */
+/* fix chull inversion -> counterclockwise */
+std::vector <int> GMath::chull(std::vector <int> set, std::vector <Point> vertex)
+{
+    std::vector <int> result;
+    if(set.size() < 3)
+    {
+        printf("ERROR face.size() < 3! \n");
+        return {};
+    }
+
+    std::vector <Point> p_set_tmp = GMath::flatten(set, vertex);
+    std::vector <Dublin> p_set(set.size());
+    for(size_t i = 0; i < p_set.size(); ++i)
+        p_set[i] = {p_set_tmp[i], set[i]};
+
+    double min_y = p_set[0].p.y;
+    int min_index = 0;
+    for(size_t i = 1; i < p_set.size(); ++i)
+    {
+        if(p_set[i].p.y < min_y || (p_set[i].p.y == min_y && p_set[i].p.x < p_set[min_index].p.x))
+        {
+            min_y = p_set[i].p.y;
+            min_index = i;
+        }
+    }
+    std::swap(p_set[0], p_set[min_index]);
+
+    Point p0 = p_set[0].p;
+    std::sort(p_set.begin()+1, p_set.end(), compare_by_angle(p0));
+
+    for(size_t i = 0; i < p_set.size(); ++i)
+        printf("%f %f\n", p_set[i].p.x, p_set[i].p.y);
+
+    std::stack <Dublin> s;
+    s.push(p_set[0]);
+    s.push(p_set[1]);
+    s.push(p_set[2]);
+
+    for(size_t i = 3; i < p_set.size(); ++i)
+    {
+        while(find_wise(after_top(s).p, s.top().p, p_set[i].p) != 2)
+            s.pop();
+        s.push(p_set[i]);
+    }
+
+    std::stack <Dublin> s_copy = s;
+    while(!s_copy.empty())
+    {
+        Point pp = s_copy.top().p;
+        int ind = s_copy.top().index;
+        /* printf("%f, %f -- %d \n", pp.x, pp.y, ind); */
+        /* printf("%f, %f -- %d \n", pp.x, pp.y, ind); */
+        result.push_back(ind);
+        s_copy.pop();
+    }
+    /* std::reverse(result.begin(), result.end()); */
+
+    for(size_t i = 0; i < result.size(); ++i)
+        printf("%d ", result[i]);
+    printf("\n");
     return result;
 }

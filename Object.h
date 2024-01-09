@@ -27,7 +27,7 @@ class Object
         void parse_faces(std::string);
 
         std::vector <Point> vertex;
-        std::vector <std::vector <int>> planeset;
+        std::vector <V4> planeset; // equations of plane for every side
         std::vector <std::vector <int>> connections;
         std::vector <std::vector <int>> tri; // triangles after triangulation
         std::vector <std::vector <int>> sides; // sides of poly
